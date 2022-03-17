@@ -1,3 +1,4 @@
+using AuthorizationServer;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +36,8 @@ builder.Services.AddOpenIddict().AddCore(options =>
 
     //Encryption and signin of tokens
     options.AddEphemeralEncryptionKey()
-    .AddEphemeralSigningKey();
+    .AddEphemeralSigningKey()
+    .DisableAccessTokenEncryption();
 
     //register scopes
     options.RegisterScopes("api");
@@ -44,6 +46,8 @@ builder.Services.AddOpenIddict().AddCore(options =>
     options.UseAspNetCore().EnableAuthorizationEndpointPassthrough();
 });
 
+//let's register test client data
+builder.Services.AddHostedService<DataForTestingClient>();
 
 
 WebApplication? app = builder.Build();
