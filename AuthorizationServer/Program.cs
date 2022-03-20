@@ -29,21 +29,23 @@ builder.Services.AddDbContext<DbContext>(options =>
 builder.Services.AddOpenIddict().AddCore(options =>
 {
     options.UseEntityFrameworkCore().UseDbContext<DbContext>();
-}).AddServer(options =>
+})
+    // Register the OpenIddict server components.
+    .AddServer(options =>
 {
     options.AllowClientCredentialsFlow();
     options.SetTokenEndpointUris("/connect/token");
 
     //Encryption and signin of tokens
     options.AddEphemeralEncryptionKey()
-    .AddEphemeralSigningKey()
-    .DisableAccessTokenEncryption();
+            .AddEphemeralSigningKey()
+            .DisableAccessTokenEncryption();
 
     //register scopes
     options.RegisterScopes("api");
 
-    //register the asp.net
-    options.UseAspNetCore().EnableAuthorizationEndpointPassthrough();
+    //register the asp.net core host and configure the asp.net core-specific options
+    options.UseAspNetCore().EnableTokenEndpointPassthrough();
 });
 
 //let's register test client data

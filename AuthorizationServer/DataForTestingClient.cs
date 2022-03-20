@@ -19,15 +19,15 @@ namespace AuthorizationServer
 
             IOpenIddictApplicationManager? manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
 
-            object? testClient = await manager.FindByClientIdAsync("testclient", cancellationToken);
+            object? testClient = await manager.FindByClientIdAsync("postman", cancellationToken);
 
             if (testClient == null)
             {
                 await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
-                    ClientId = "testclient",
+                    ClientId = "postman",
                     ClientSecret = "testclient-secret",
-                    DisplayName = "TestClient",
+                    DisplayName = "Postman",
                     Permissions =
                     {
                         OpenIddictConstants.Permissions.Endpoints.Token,
