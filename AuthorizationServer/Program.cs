@@ -33,8 +33,12 @@ builder.Services.AddOpenIddict().AddCore(options =>
     // Register the OpenIddict server components.
     .AddServer(options =>
 {
+    //enables the flow
+    //RequireProofKeyForCodeExchange is called directly after that, this makes sure all clients are required to use PKCE (Proof Key for Code Exchange).
+    options.AllowAuthorizationCodeFlow().RequireProofKeyForCodeExchange();
     options.AllowClientCredentialsFlow();
     options.SetTokenEndpointUris("/connect/token");
+    options.SetAuthorizationEndpointUris("/connect/authorize");
 
     //Encryption and signin of tokens
     options.AddEphemeralEncryptionKey()
@@ -45,7 +49,10 @@ builder.Services.AddOpenIddict().AddCore(options =>
     options.RegisterScopes("api");
 
     //register the asp.net core host and configure the asp.net core-specific options
-    options.UseAspNetCore().EnableTokenEndpointPassthrough();
+    options
+    .UseAspNetCore()
+    .EnableTokenEndpointPassthrough()
+    .EnableAuthorizationEndpointPassthrough();
 });
 
 //let's register test client data
