@@ -39,6 +39,7 @@ builder.Services.AddOpenIddict().AddCore(options =>
     options.AllowClientCredentialsFlow();
     options.SetTokenEndpointUris("/connect/token");
     options.SetAuthorizationEndpointUris("/connect/authorize");
+    options.SetUserinfoEndpointUris("/connect/userinfo");
 
     //Encryption and signin of tokens
     options.AddEphemeralEncryptionKey()
@@ -52,7 +53,8 @@ builder.Services.AddOpenIddict().AddCore(options =>
     options
     .UseAspNetCore()
     .EnableTokenEndpointPassthrough()
-    .EnableAuthorizationEndpointPassthrough();
+    .EnableAuthorizationEndpointPassthrough()
+    .EnableUserinfoEndpointPassthrough();
 });
 
 //let's register test client data
@@ -73,6 +75,7 @@ if (!app.Environment.IsDevelopment())
 //app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
+app.UseAuthorization();
 app.UseEndpoints(endpoints => { endpoints.MapDefaultControllerRoute(); });
 
 app.Run();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
@@ -79,7 +80,8 @@ namespace AuthorizationServer.Controllers
     {
         // 'subject' claim which is required
         new Claim(OpenIddictConstants.Claims.Subject, result.Principal.Identity.Name),
-        new Claim("some claim", "some value").SetDestinations(OpenIddictConstants.Destinations.AccessToken)
+        new Claim("some claim", "some value").SetDestinations(OpenIddictConstants.Destinations.AccessToken),
+        new Claim(OpenIddictConstants.Claims.Email, "myemail@email.com").SetDestinations(OpenIddictConstants.Destinations.IdentityToken)
     };
 
             ClaimsIdentity? claimsIdentity = new ClaimsIdentity(claims, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -93,6 +95,19 @@ namespace AuthorizationServer.Controllers
             return SignIn(claimsPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
 
+        }
+
+        [Authorize(AuthenticationSchemes = OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)]
+        [HttpGet("~/connect/userinfo")]
+        public async Task<IActionResult> UserInfo()
+        {
+            ClaimsPrincipal? claimsPrincipal = (await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme)).Principal;
+            return Ok(new
+            {
+                Name = claimsPrincipal.GetClaim(OpenIddictConstants.Claims.Subject),
+                City = "Albertslund",
+                Position = "Full-stack"
+            });
         }
     }
 }
